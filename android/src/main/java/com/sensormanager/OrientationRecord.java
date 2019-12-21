@@ -185,12 +185,18 @@ public class OrientationRecord implements SensorEventListener {
         int SensorType = sensorEvent.sensor.getType();
         switch(SensorType) {
             case Sensor.TYPE_GRAVITY:
+                for(int i = 0; i< 3; i++){
+                    mGravity[i] = sensorEvent.values[i];
+                }
                 if (m_NormGravityVector == null) m_NormGravityVector = new float[3];
                 System.arraycopy(sensorEvent.values, 0, m_NormGravityVector, 0, m_NormGravityVector.length);
                 m_Norm_Gravity = (float)Math.sqrt(m_NormGravityVector[0]*m_NormGravityVector[0] + m_NormGravityVector[1]*m_NormGravityVector[1] + m_NormGravityVector[2]*m_NormGravityVector[2]);
                 for(int i=0; i < m_NormGravityVector.length; i++) m_NormGravityVector[i] /= m_Norm_Gravity;
                 break;
             case Sensor.TYPE_MAGNETIC_FIELD:
+                for(int i = 0; i< 3; i++){
+                    mGeomagnetic[i] = sensorEvent.values[i];
+                }
                 if (m_NormMagFieldValues == null) m_NormMagFieldValues = new float[3];
                 System.arraycopy(sensorEvent.values, 0, m_NormMagFieldValues, 0, m_NormMagFieldValues.length);
                 m_Norm_MagField = (float)Math.sqrt(m_NormMagFieldValues[0]*m_NormMagFieldValues[0] + m_NormMagFieldValues[1]*m_NormMagFieldValues[1] + m_NormMagFieldValues[2]*m_NormMagFieldValues[2]);
@@ -245,10 +251,18 @@ public class OrientationRecord implements SensorEventListener {
             }
             long curTime = System.currentTimeMillis();
             if ((curTime - lastUpdate) > delay) {
+                Log.d("OrientationRecord", "Gravity : " + mGravity[0] + " " + mGravity[1] + " " + mGravity[2]);
+                Log.d("OrientationRecord", "Geomagnetic : " + mGeomagnetic[0] + " " + mGeomagnetic[1] + " " + mGeomagnetic[2]);
                 WritableMap map = mArguments.createMap();
                 map.putDouble("azimuth", Math.toDegrees(m_azimuth_radians));
                 map.putDouble("pitch", 0);
                 map.putDouble("roll", 0);
+                map.putDouble("GravityX", mGravity[0]);
+                map.putDouble("GravityY", mGravity[1]);
+                map.putDouble("GravityZ", mGravity[2]);
+                map.putDouble("GeomagneticX", mGeomagnetic[0]);
+                map.putDouble("GeomagneticY", mGeomagnetic[1]);
+                map.putDouble("GeomagneticZ", mGeomagnetic[2]);
                 sendEvent("Orientation", map);
                 lastUpdate = curTime;
             }
