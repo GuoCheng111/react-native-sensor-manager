@@ -275,5 +275,9 @@ public class OrientationRecord implements SensorEventListener {
     @Override
     public void onAccuracyChanged(Sensor sensor, int accuracy) {
         Log.d("OrientationRecord","sensor.getType() : " + sensor.getType() + " accuracy : " + accuracy);
+        WritableMap map = mArguments.createMap();
+        map.putInt("sensorType", sensor.getType());
+        map.putInt("accuracy", accuracy);
+        sendEvent("onAccuracyChanged", map);
     }
 }
